@@ -1,8 +1,4 @@
 # steemstatus
-steem status
-
-For steem statistics, accounts ranking and witness information.
-
 Guide : https://steemit.com/utopian-io/@koinbot/steem-status-steem-statistics-accounts-ranking-and-witness-info
 
 # About steem status
