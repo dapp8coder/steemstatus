@@ -2,6 +2,8 @@
 steem status
 
 
-for steem report, accounts ranking and witness information.
+For steem statistics, accounts ranking and witness information.
 
 http://steemstatus.com
+
+created by @koinbot
