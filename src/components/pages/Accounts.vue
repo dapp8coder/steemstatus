@@ -3,9 +3,6 @@
 <div class="accounts container" >
 
 
-
-
-
 <ul class="list-group mb-2" >
   <li class="d-flex justify-content-between steem-card-title">
       <p></p>
@@ -133,20 +130,8 @@
 <div>
   <nav aria-label="Page navigation example" style="margin-top:22px">
     <ul class="pagination justify-content-center">
-      <li class="page-item">
-        <a class="page-link" v-on:click.prevent="preNextClick('prev')" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-          <span class="sr-only" >Previous</span>
-        </a>
-      </li>
       <li class="page-item"  v-for="(value, index) in pageList" v-bind:class="{ active: page==value }">
         <a class="page-link" v-on:click.prevent="pageClick(value)">{{value}}</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" v-on:click.prevent="preNextClick('next')" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-          <span class="sr-only" >Next</span>
-        </a>
       </li>
     </ul>
   </nav>
@@ -216,7 +201,7 @@ export default {
         });
 
 
-      this.$http.get('http://steemlite.cafe24.com:3001/usercount')
+      this.$http.get(this.$apiserver+'/usercount')
         .then((result) => {
           this.accountCount=result.data
         })
@@ -230,7 +215,7 @@ export default {
 
         let url = ''
         if(page===1){
-          url = 'http://steemlite.cafe24.com:3001/users?page=1&sort='+this.sortBy
+          url = this.$apiserver+'/users?page=1&sort='+this.sortBy
         }else{
 
           let nexrOrPrev = this.page < page ? '/next' : '/prev'
@@ -239,14 +224,6 @@ export default {
 
 
           if(nexrOrPrev=='/next'){
-            // for(let value of this.allUsers){
-            //   let index = (page-1) * 15
-
-            //     if(value.rank==index){
-            //       targetUserName = value.name
-            //       break
-            //     } 
-            // }
 
             let index  = (page-this.page)*15-1
 
@@ -255,13 +232,12 @@ export default {
             targetUserName = this.allUsers[index].name
 
           }else{
-            // let index  = (this.page-page)*15 -1
             targetUserName = this.allUsers[0].name
           }
 
           console.log(targetUserName)
 
-          url = 'http://steemlite.cafe24.com:3001/users/'+targetUserName+nexrOrPrev + '?sort='+this.sortBy
+          url = this.$apiserver+'/users/'+targetUserName+nexrOrPrev + '?sort='+this.sortBy
         }
 
         this.initPage(page)
@@ -282,7 +258,7 @@ export default {
     },
 
     updateClick(name){
-      this.$http.get('http://steemlite.cafe24.com:3001/users/'+name + '?sort='+this.sortBy)
+      this.$http.get(this.$apiserver+'/users/'+name + '?sort='+this.sortBy)
       .then((result) => {
             this.getUsers()
       })
@@ -297,19 +273,7 @@ export default {
 
           for(let value of data.data){
 
-            // console.log(value)
             value.fromNow = moment(value.last_updated).fromNow();
-
-            // if(value.fromNow.includes('second')){
-            //   value.fromNow = 'Sec'
-            // }else if(value.fromNow.includes('minute')){
-            //   value.fromNow = 'Min'
-            // }else if(value.fromNow.includes('day')){
-            //   value.fromNow = 'Day'
-            // }else if(value.fromNow.includes('hour')){
-            //   value.fromNow = 'Hour'
-            // }
-
 
             var tempimg = 'https://steemit-production-imageproxy-thumbnail.s3.amazonaws.com/U5ds8wePoj1V1DoRR4bzzKUARNiywjp_128x128';
 
@@ -381,7 +345,7 @@ export default {
       if(this.userName.length){
         this.nameEnter()
       }else{
-        this.getUsers()
+        this.getUsers(1)
       }
       
       
@@ -401,7 +365,7 @@ export default {
 
 
       this.showSpinner = true;
-      this.$http.get('http://steemlite.cafe24.com:3001/users/'+this.userName + '?sort='+this.sortBy)
+      this.$http.get(this.$apiserver+'/users/'+this.userName + '?sort='+this.sortBy)
       .then((result) => {
         if(result.data.message){
           this.$bus.$emit('showSnackbar', result.data.message)

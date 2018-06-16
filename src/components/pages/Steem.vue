@@ -5,14 +5,16 @@
 
 
 
-<!-- 
-<ul class="list-group mb-2" >
-  <li class="d-flex justify-content-between steem-card-title">
-      <p></p>
-      <span><small>synced every 10 minutes </small></span>
-  </li>
-</ul>
- -->
+
+<div class="d-flex align-items-end flex-column bd-highlight mb-3" >
+  <div class="mb-1 bd-highlight">Total STEEM : {{toNumber(globalProperties.current_supply)}}</div>
+  <div class="mb-1 bd-highlight">Total SP : {{toNumber(globalProperties.total_sp)}}</div>
+  <div class="mt-auto mb-1 bd-highlight">Total SBD : {{toNumber(globalProperties.current_sbd_supply)}}</div>
+</div>
+
+
+
+
 <div class="card mb-3" v-if="postReport.post_counts">
 	<div class="card-body">
 
@@ -174,7 +176,8 @@ export default {
     return {
       showSpinner : false,
       userReport : {},
-      postReport : {}
+      postReport : {},
+      globalProperties : {}
     }
   },
   computed: {
@@ -193,17 +196,32 @@ export default {
 		this.$store.commit('topMenu','steemstatus')
 
 		this.showSpinner = true;
+		
+		this.getGlobalProperties()
 		this.getPostReport();
 		this.getUserReport();
+
 	},
 
   methods: {
+
+    getGlobalProperties(){
+
+        this.$http.get(this.$apiserver+'/steem/cache')
+        .then((result) => {
+            this.globalProperties = result.data
+        })
+        .catch(error => {
+          console.log(error.response)
+        });
+
+    },
 
 
   	getPostReport(){
 
 
-      this.$http.get('http://steemlite.cafe24.com:3001/postreport')
+      this.$http.get(this.$apiserver+'/postreport')
         .then((result) => {
 
 			let data = result.data
@@ -218,7 +236,6 @@ export default {
 				item.percent = Number((item.count / maxCount * 100).toFixed(1))
 			}
 
-			console.log(data)
 			data.post_count_max = maxCount
 			this.postReport = data
 
@@ -232,7 +249,7 @@ export default {
 
     getUserReport(){
 
-      this.$http.get('http://steemlite.cafe24.com:3001/userreport')
+      this.$http.get(this.$apiserver+'/userreport')
         .then((result) => {
 
 			let data = result.data

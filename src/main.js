@@ -7,7 +7,7 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 
-import steem from 'steem'
+// import steem from 'steem'
 
 // only import the icons you use to reduce bundle size
 // import 'vue-awesome/icons/flag'
@@ -17,7 +17,7 @@ import steem from 'steem'
 
 // globally (in your main .js file)
 
-steem.api.setOptions({ url: 'https://api.steemit.com' });
+// steem.api.setOptions({ url: 'https://api.steemit.com' });
 
 var bus = new Vue()
 
@@ -25,7 +25,10 @@ Vue.config.productionTip = false
 
 Vue.prototype.$http = axios
 Vue.prototype.$bus = bus
-Vue.prototype.$steem = steem
+// Vue.prototype.$steem = steem
+
+Vue.prototype.$apiserver = 'http://steemlite.com:3001'
+
 
 
 Vue.use(Vuex)

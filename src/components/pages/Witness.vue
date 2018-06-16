@@ -36,7 +36,7 @@
       <td style="padding:0.3rem 0.5rem 0.3rem 0rem"><b>{{value.active_rank}}</b></td>
       <td  style="padding:0.3rem 1.1rem 0.3rem 0rem">{{value.owner}}</td>
       <td class="text-right" style="padding:0.3rem 1.1rem 0.3rem 0rem">{{toLS(value.votes_sp)}}<small v-if="value.active"><br/>{{value.votes_sp_percent}}%</small></td>
-      <td class="text-right" style="padding:0.3rem 1.1rem 0.3rem 0rem">{{value.last_confirmed_block_num}}<span v-bind:class="{ 'alive-2': value.last_confirmed_block_h>0 && value.last_confirmed_block_h<=1, 'alive-1': value.last_confirmed_block_h==0}" v-if="value.active"><br/>{{value.last_confirmed_block_h}}<small>h</small></span></td>
+      <td class="text-right" style="padding:0.3rem 1.1rem 0.3rem 0rem">{{value.last_confirmed_block_num}}<span v-bind:class="{ 'alive-2': value.last_confirmed_block_h>0.1 && value.last_confirmed_block_h<=1, 'alive-1': value.last_confirmed_block_h<=0.1}" v-if="value.active"><br/>{{value.last_confirmed_block_h}}<small>h</small></span></td>
       <td class="text-right" style="padding:0.3rem 1.1rem 0.3rem 0rem">${{parseFloat(value.sbd_exchange_rate.base)}}<span v-bind:class="{ 'alive-1': value.last_sbd_exchange_update_h<=2}" v-if="value.active"><br/>{{value.last_sbd_exchange_update_h}}<small>h</small></span></td>
       <td class="text-right" style="padding:0.3rem 1.1rem 0.3rem 0rem">{{value.total_missed}}</td>
 
@@ -94,12 +94,14 @@ export default {
 
 	this.showSpinner = true;
 
-      this.$http.get('http://steemlite.cafe24.com:3001/witness')
+      this.$http.get(this.$apiserver+'/witness')
         .then((result) => {
 
 			let data = result.data
 			let active_count = 0
 			let active_rank = 0
+
+      let activeWitnessCount = 0;
 
 			for(let item of data.witness){
 
@@ -110,6 +112,11 @@ export default {
 				}else{
 					item.last_confirmed_block_h = Number(hAgo.toFixed(1))
 				}
+
+        // if(activeWitnessCount<20){
+        //   item.last_confirmed_block_h = 0
+        // }
+        // activeWitnessCount++
 
 
 				// item.percent = 0
@@ -147,7 +154,7 @@ export default {
 	        let calSecond = Math.floor(difference/1000);
 	        let fromNowMin = Number((calSecond/60).toFixed(1));
 
-	        fromNowMin = fromNowMin <0 ? 0 : fromNowMin
+	        fromNowMin = fromNowMin <0 ? '?' : fromNowMin
 
 
 			this.global = {active_count:active_count,synced_m:fromNowMin}
